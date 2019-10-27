@@ -10,12 +10,11 @@ class commentProductClass extends ObjectModelCore
     public static $definition = array(
         'table' => 'product_comment',
         'primary' => 'id_comment',
-        'multilang' => true,
+        'multilang' => false,
         'fields' => array(
-            'id_comment' => array('type' => self::TYPE_INT, 'lang' => true, 'required' => true),
-            'user_id' => array('type' => self::TYPE_INT, 'lang' => true, 'required' => true),
-            'product_id' => array('type' => self::TYPE_INT, 'lang' => true, 'required' => true),
-            'comment' => array('type' => self::TYPE_STRING, 'lang' => true, 'validate' => 'isGenericName', 'required' => true),
+            'user_id' => array('type' => self::TYPE_INT, 'required' => true),
+            'product_id' => array('type' => self::TYPE_INT, 'required' => true),
+            'comment' => array('type' => self::TYPE_STRING, 'required' => true),
         )
     );
 

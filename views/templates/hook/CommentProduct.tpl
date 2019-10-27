@@ -1,4 +1,12 @@
-<form action="{$smarty.server.HTTP_HOST}{$smarty.server.REQUEST_URI}" method="post">
+{if $messageResult }
+    <div class="alert alert-success" role="alert">
+        <p class="alert-text">Thank you for your review        </p>
+    </div>
+{else}
+    Sometghin went wrong herer!!!!
+{/if}
+
+<form action="" method="post">
     <fieldset class="form-group">
         <label class="form-control-label" for="exampleInput1">Type your message</label>
         <textarea required name="comment" class="form-control" id="comment" cols="30" rows="10"></textarea>

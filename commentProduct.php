@@ -34,8 +34,9 @@ class CommentProduct extends Module implements \PrestaShop\PrestaShop\Core\Modul
 
     public function install()
     {
-        return parent::install() &&
-            Db::getInstance()->execute('
+        return parent::install()
+            && $this->registerHook('displayFooterProduct')
+            && Db::getInstance()->execute('
             CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'product_comment` (
                 `id_comment` INT UNSIGNED NOT NULL AUTO_INCREMENT,
                 `user_id` int(10) NOT NULL,
@@ -48,25 +49,36 @@ class CommentProduct extends Module implements \PrestaShop\PrestaShop\Core\Modul
 
     public function uninstall()
     {
-        return parent::uninstall() &&
-            Db::getInstance()->execute('DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'product_comment`');
+        if (
+            parent::uninstall()
+            && Db::getInstance()->execute('DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'product_comment`'))
+            return true;
+        return false;
+
+
     }
 
     public function getWidgetVariables($hookName, array $configuration)
     {
         // handle form submission
+        $message = "";
 
         if (Tools::isSubmit('comment')) {
-            $commentProduct =  new commentProductClass();
-            $commentProduct->comment;
-            $commentProduct->product_id;
-            $commentProduct->user_id;
-            $commentProduct->save();
-            print_r(Tools::getAllValues());
+            $commentProduct = new commentProductClass();
+            $commentProduct->comment = Tools::getValue('comment');
+            $commentProduct->product_id = Tools::getValue('id_product');
+            $commentProduct->user_id = 1;
+
+            if ($commentProduct->save())
+                $message = true;
+            else {
+                $message = false;
+            }
         }
 
         return array(
-            'message' => "Hello, this product is great!"
+            'message' => "Hello, this product is great!" ,
+            'messageResult' => $message
         );
     }
 }
