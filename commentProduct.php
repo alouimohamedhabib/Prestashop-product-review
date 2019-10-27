@@ -62,6 +62,7 @@ class CommentProduct extends Module implements \PrestaShop\PrestaShop\Core\Modul
     {
         // handle form submission
         $message = "";
+        $comments = null;
 
         if (Tools::isSubmit('comment')) {
             $commentProduct = new commentProductClass();
@@ -75,10 +76,15 @@ class CommentProduct extends Module implements \PrestaShop\PrestaShop\Core\Modul
                 $message = false;
             }
         }
+        // Get the previous comments
+        $comments = Db::getInstance()->executeS('
+        SELECT * FROM `' . _DB_PREFIX_ . 'product_comment`
+        WHERE product_id = ' . (int)Tools::getValue('id_product'));
 
         return array(
-            'message' => "Hello, this product is great!" ,
-            'messageResult' => $message
+            'message' => "Hello, this product is great!",
+            'messageResult' => $message,
+            'comments' => $comments
         );
     }
 }

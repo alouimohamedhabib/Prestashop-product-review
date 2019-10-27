@@ -1,8 +1,20 @@
-{if $messageResult }
+{if $comments}
+    {foreach from=$comments item=element}
+        <div class="module-item-wrapper-grid">
+
+            <div class="module-container">
+                {$element.comment}
+
+            </div>
+        </div>
+    {/foreach}
+{/if}
+
+{if $messageResult  =='true' }
     <div class="alert alert-success" role="alert">
-        <p class="alert-text">Thank you for your review        </p>
+        <p class="alert-text">Thank you for your review </p>
     </div>
-{else}
+{elseif $messageResult == "false"}
     Sometghin went wrong herer!!!!
 {/if}
 
