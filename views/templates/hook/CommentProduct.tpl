@@ -1,10 +1,12 @@
 {if $comments}
     {foreach from=$comments item=element}
+
         <div class="module-item-wrapper-grid">
 
             <div class="module-container">
-                {$element.comment}
-
+                {$element.comment} | <a href="mailto:{$element.email}
+">{$element.firstname}
+                </a>
             </div>
         </div>
     {/foreach}

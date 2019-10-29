@@ -77,14 +77,18 @@ class CommentProduct extends Module implements \PrestaShop\PrestaShop\Core\Modul
             }
         }
         // Get the previous comments
-        $comments = Db::getInstance()->executeS('
-        SELECT * FROM `' . _DB_PREFIX_ . 'product_comment`
-        WHERE product_id = ' . (int)Tools::getValue('id_product'));
+
+
+        $sql = new DbQuery();
+        $sql->select('*');
+        $sql->from('product_comment', 'pc');
+        $sql->innerJoin('customer', 'c', 'pc.user_id = c.id_customer');
+        $sql->where('pc.product_id = ' . (int)Tools::getValue('id_product'));;
 
         return array(
             'message' => "Hello, this product is great!",
             'messageResult' => $message,
-            'comments' => $comments
+            'comments' => DB::getInstance()->executeS($sql)
         );
     }
 }
