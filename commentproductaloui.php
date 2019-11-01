@@ -3,9 +3,9 @@
 if (!defined('_PS_VERSION_'))
     return false;
 
-require_once(_PS_MODULE_DIR_ . "commentProduct/commentProductClass.php");
+require_once(_PS_MODULE_DIR_ . "commentproductaloui/commentProductClass.php");
 
-class CommentProduct extends Module implements \PrestaShop\PrestaShop\Core\Module\WidgetInterface
+class CommentProductAloui extends Module implements \PrestaShop\PrestaShop\Core\Module\WidgetInterface
 {
     private $templateFile;
 
@@ -22,7 +22,7 @@ class CommentProduct extends Module implements \PrestaShop\PrestaShop\Core\Modul
         $this->description = $this->trans('Allow store users to leave a comment for product', array(), 'Modules.CommentProduct.Admin');
         $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
 
-        $this->templateFile = 'module:commentProduct/views/templates/hook/CommentProduct.tpl';
+        $this->templateFile = 'module:CommentProductAloui/views/templates/hook/CommentProduct.tpl';
     }
 
 
