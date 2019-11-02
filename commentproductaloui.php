@@ -42,6 +42,7 @@ class CommentProductAloui extends Module implements \PrestaShop\PrestaShop\Core\
                 `user_id` int(10) NOT NULL,
                 `product_id` int(10) NOT NULL,
                 `comment` varchar(255) NOT NULL,
+                `active` BOOLEAN,
                 PRIMARY KEY (`id_comment`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8 ;');
 
@@ -53,18 +54,46 @@ class CommentProductAloui extends Module implements \PrestaShop\PrestaShop\Core\
 
    public function getContent(){ 
 
+    $html = "";
+    if( Tools::getValue('id_comment') ) {
+        $resultAction = false ;
+
+        $id = Tools::getValue('id_comment');
+        $comment = new commentProductClass($id);
+
+        if(Tools::getValue('updateconfiguration'))
+            {
+                $comment->active = true ;
+                if($comment->save())
+                $resultAction = true; 
+               
+            }
+        if(Tools::isSubmit('deletecommentproductaloui')){
+            if($comment->delete())
+                $resultAction =  true;        
+        } 
+
+        if($resultAction )
+            $html .=  "<div class='alert alert-success' >Action executed correctly </div>";
+        else 
+            $html .=  "<div class='alert alert-error' >Error happened</div>";
+  
+    }
     $data =  $this->getAllRecord();
-       // create the helper list
-       $helper =  new HelperList();
-       $helper->identifier = "id_comment";
-       $helper->shopLinkType = null;
-       $helper->actions = array('edit' , 'delete');
+        // create the helper list
+        $helper =  new HelperList();
+        $helper->identifier = "id_comment";
+        $helper->shopLinkType = null;
+        $helper->actions = array('edit' , 'delete'); 
 
-       $helper->token = Tools::getAdminTokenLite('AdminModules');
-       $helper->currentIndex = AdminController::$currentIndex.'&configure='.$this->name ;
+        $helper->title = $this->displayName;
+        $helper->table = $this->name;
+        
+        $helper->token = Tools::getAdminTokenLite('AdminModules');
+        $helper->currentIndex = AdminController::$currentIndex.'&configure='.$this->name ;
 
-       return $helper->generateList($data  , array (
-                'id_comment' => array (
+        $html.= $helper->generateList($data  , array (
+                'id_comment' => array ( 
                     'title' => "ID" , 
                     'width' => 80,
                     'search' => false,
@@ -73,11 +102,12 @@ class CommentProductAloui extends Module implements \PrestaShop\PrestaShop\Core\
                 'comment' => array (
                     'title' => "The comment"
                 )
-       ));
+        ));
+        return $html;
+        
    
    }
 
- 
 
     public function uninstall()
     {
@@ -101,6 +131,7 @@ class CommentProductAloui extends Module implements \PrestaShop\PrestaShop\Core\
             $commentProduct->comment = Tools::getValue('comment');
             $commentProduct->product_id = Tools::getValue('id_product');
             $commentProduct->user_id = 1;
+            $commentProduct->active = false;
 
             if ($commentProduct->save())
                 $message = true;
