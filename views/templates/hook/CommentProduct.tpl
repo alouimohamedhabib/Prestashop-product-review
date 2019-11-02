@@ -1,17 +1,3 @@
-{if $comments}
-    {foreach from=$comments item=element}
-
-        <div class="module-item-wrapper-grid">
-
-            <div class="module-container">
-                {$element.comment} | <a href="mailto:{$element.email}
-">{$element.firstname}
-                </a>
-            </div>
-        </div>
-    {/foreach}
-{/if}
-
 {if $messageResult  =='true' }
     <div class="alert alert-success" role="alert">
         <p class="alert-text">Thank you for your review </p>
@@ -19,6 +5,31 @@
 {elseif $messageResult == "false"}
     Sometghin went wrong herer!!!!
 {/if}
+
+{if $comments}
+<h2>
+Comments
+</h2>
+    {foreach from=$comments item=element}
+         <div class=" row" >
+               <div class="col-12" >
+               <div class="comment">
+                    <div class="comment-avatar" >
+                        
+                    </div> 
+                    <div class="comment-content" >
+                        <div class="comment-author" >
+                            <a href="mailto:{$element.email}">{$element.firstname}</a>
+                        </div>
+                        {$element.comment}  
+                    </div> 
+               </div> 
+            </div> 
+         </div>
+    {/foreach}
+{/if}
+
+
 
 <form action="" method="post">
     <fieldset class="form-group">

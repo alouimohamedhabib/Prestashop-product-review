@@ -15,6 +15,7 @@ class commentProductClass extends ObjectModelCore
             'user_id' => array('type' => self::TYPE_INT, 'required' => true),
             'product_id' => array('type' => self::TYPE_INT, 'required' => true),
             'comment' => array('type' => self::TYPE_STRING, 'required' => true),
+         
         )
     );
 

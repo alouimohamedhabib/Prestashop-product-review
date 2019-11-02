@@ -48,9 +48,36 @@ class CommentProductAloui extends Module implements \PrestaShop\PrestaShop\Core\
     }
 
    public function hookdisplayHeader(){
-       
     $this->context->controller->registerStylesheet('modules-commentproductaloui', 'modules/'.$this->name.'/assets/style.css');
    }
+
+   public function getContent(){ 
+
+    $data =  $this->getAllRecord();
+       // create the helper list
+       $helper =  new HelperList();
+       $helper->identifier = "id_comment";
+       $helper->shopLinkType = null;
+       $helper->actions = array('edit' , 'delete');
+
+       $helper->token = Tools::getAdminTokenLite('AdminModules');
+       $helper->currentIndex = AdminController::$currentIndex.'&configure='.$this->name ;
+
+       return $helper->generateList($data  , array (
+                'id_comment' => array (
+                    'title' => "ID" , 
+                    'width' => 80,
+                    'search' => false,
+                    'orderby' => false
+                ) ,
+                'comment' => array (
+                    'title' => "The comment"
+                )
+       ));
+   
+   }
+
+ 
 
     public function uninstall()
     {
@@ -96,4 +123,13 @@ class CommentProductAloui extends Module implements \PrestaShop\PrestaShop\Core\
             'comments' => DB::getInstance()->executeS($sql)
         );
     }
+
+    protected function getAllRecord(){
+        $sql = new DbQuery();
+            $sql->select('*');
+            $sql->from('product_comment', 'pc');
+            $sql->innerJoin('customer', 'c', 'pc.user_id = c.id_customer');
+            return DB::getInstance()->executeS($sql);
+    }
+
 }

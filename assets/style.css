@@ -1,3 +1,45 @@
-body *{
-         background: purple !important;
+.comment {
+  display: flex;
+  flex-direction: row;
+  margin: 1rem 0;
+}
+.comment-avatar {
+  width: 50px;
+  height: 50px;
+  background: #ffffff;
+  margin-right: 1rem;
+  border-radius: 50px;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
+.comment-content {
+  background: #ffffff;
+  width: calc(100% - 100px);
+  border-radius: 5px;
+  padding: 1rem;
+  position: relative;
+  box-shadow: 2px 4px 7px rgba(197, 193, 193, 0.3);
+}
+.comment-content .comment-author {
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+  padding: 5px 0 10px 0;
+  margin-bottom: 10px;
+}
+
+.comment-content:before {
+  right: 100%;
+  top: 30%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+}
+
+.comment-content:before {
+  border-color: rgba(194, 225, 245, 0);
+  border-right-color: #ffffff;
+  border-width: 10px;
+  margin-top: -16px;
 }
