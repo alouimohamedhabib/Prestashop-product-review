@@ -11,20 +11,19 @@ class CommentProductAloui extends Module implements \PrestaShop\PrestaShop\Core\
 
     public function __construct()
     {
-        $this->name = 'commentproduct';
+        $this->name = 'commentproductaloui';
         $this->author = 'Aloui Mohamed Habib';
         $this->version = '1.0';
 
         $this->bootstrap = true;
         parent::__construct();
 
-        $this->displayName = $this->trans('Product comment', array(), 'Modules.CommentProduct.Admin');
-        $this->description = $this->trans('Allow store users to leave a comment for product', array(), 'Modules.CommentProduct.Admin');
+        $this->displayName = $this->trans('Product comment', array(), 'Modules.CommentProductAloui.Admin');
+        $this->description = $this->trans('Allow store users to leave a comment for product', array(), 'Modules.CommentProductAloui.Admin');
         $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
 
-        $this->templateFile = 'module:CommentProductAloui/views/templates/hook/CommentProduct.tpl';
+        $this->templateFile = 'module:commentproductaloui/views/templates/hook/CommentProduct.tpl';
     }
-
 
     public function renderWidget($hookName, array $configuration)
     {
@@ -36,6 +35,7 @@ class CommentProductAloui extends Module implements \PrestaShop\PrestaShop\Core\
     {
         return parent::install()
             && $this->registerHook('displayFooterProduct')
+            && $this->registerHook('displayHeader')
             && Db::getInstance()->execute('
             CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'product_comment` (
                 `id_comment` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -46,6 +46,11 @@ class CommentProductAloui extends Module implements \PrestaShop\PrestaShop\Core\
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8 ;');
 
     }
+
+   public function hookdisplayHeader(){
+       
+    $this->context->controller->registerStylesheet('modules-commentproductaloui', 'modules/'.$this->name.'/assets/style.css');
+   }
 
     public function uninstall()
     {
