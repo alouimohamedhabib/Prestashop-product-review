@@ -48,65 +48,79 @@ class CommentProductAloui extends Module implements \PrestaShop\PrestaShop\Core\
 
     }
 
-   public function hookdisplayHeader(){
-    $this->context->controller->registerStylesheet('modules-commentproductaloui', 'modules/'.$this->name.'/assets/style.css');
-   }
-
-   public function getContent(){ 
-
-    $html = "";
-    if( Tools::getValue('id_comment') ) {
-        $resultAction = false ;
-
-        $id = Tools::getValue('id_comment');
-        $comment = new commentProductClass($id);
-
-        if(Tools::getValue('updateconfiguration'))
-            {
-                $comment->active = true ;
-                if($comment->save())
-                $resultAction = true; 
-               
-            }
-        if(Tools::isSubmit('deletecommentproductaloui')){
-            if($comment->delete())
-                $resultAction =  true;        
-        } 
-
-        if($resultAction )
-            $html .=  "<div class='alert alert-success' >Action executed correctly </div>";
-        else 
-            $html .=  "<div class='alert alert-error' >Error happened</div>";
-  
+    public function hookdisplayHeader()
+    {
+        $this->context->controller->registerStylesheet('modules-commentproductaloui', 'modules/' . $this->name . '/assets/style.css');
     }
-    $data =  $this->getAllRecord();
+
+    public function getContent()
+    {
+        $html = "";
+        if (Tools::isSubmit('getcsv')) {
+            $folderName = _PS_UPLOAD_DIR_;
+            $serverName = _PS_BASE_URL_ . __PS_BASE_URI__;
+            $finalFileName = date('Y-m-d-i-s') . ".csv";
+            $downloadFileUrl = $serverName . 'upload/' . $finalFileName;
+            $file = fopen($folderName . $finalFileName, 'w');
+            $data = $this->getAllRecord();
+            fputcsv($file, array_keys($data[0]), ";");
+            foreach ($data as $item) {
+                fputcsv($file, $item, ";");
+            }
+            fclose($file);
+            $html = "<a   type=\"button\" class=\"btn btn-primary\"     href='". $downloadFileUrl ."' >Downlod the file</a><br>" ;
+        }
+
+        if (Tools::getValue('id_comment')) {
+            $resultAction = false;
+
+            $id = Tools::getValue('id_comment');
+            $comment = new commentProductClass($id);
+
+            if (Tools::getValue('updatecommentproductaloui')) {
+                $comment->active = true;
+                if ($comment->save())
+                    $resultAction = true;
+
+            }
+            if (Tools::isSubmit('deletecommentproductaloui')) {
+                if ($comment->delete())
+                    $resultAction = true;
+            }
+
+            if ($resultAction)
+                $html .= "<div class='alert alert-success' >Action executed correctly </div>";
+            else
+                $html .= "<div class='alert alert-error' >Error happened</div>";
+
+        }
+        $data = $this->getAllRecord();
         // create the helper list
-        $helper =  new HelperList();
+        $helper = new HelperList();
         $helper->identifier = "id_comment";
         $helper->shopLinkType = null;
-        $helper->actions = array('edit' , 'delete'); 
-
+        $helper->actions = array('edit', 'delete');
         $helper->title = $this->displayName;
         $helper->table = $this->name;
-        
-        $helper->token = Tools::getAdminTokenLite('AdminModules');
-        $helper->currentIndex = AdminController::$currentIndex.'&configure='.$this->name ;
 
-        $html.= $helper->generateList($data  , array (
-                'id_comment' => array ( 
-                    'title' => "ID" , 
-                    'width' => 80,
-                    'search' => false,
-                    'orderby' => false
-                ) ,
-                'comment' => array (
-                    'title' => "The comment"
-                )
+        $helper->token = Tools::getAdminTokenLite('AdminModules');
+        $helper->currentIndex = AdminController::$currentIndex . '&configure=' . $this->name;
+
+        $html .= $helper->generateList($data, array(
+            'id_comment' => array(
+                'title' => "ID",
+                'width' => 80,
+                'search' => false,
+                'orderby' => false
+            ),
+            'comment' => array(
+                'title' => "The comment"
+            )
         ));
         return $html;
-        
-   
-   }
+
+
+    }
 
 
     public function uninstall()
@@ -146,7 +160,7 @@ class CommentProductAloui extends Module implements \PrestaShop\PrestaShop\Core\
         $sql->select('*');
         $sql->from('product_comment', 'pc');
         $sql->innerJoin('customer', 'c', 'pc.user_id = c.id_customer');
-        $sql->where('pc.product_id = ' . (int)Tools::getValue('id_product'));;
+        $sql->where(' pc.active = 1 && pc.product_id = ' . (int)Tools::getValue('id_product'));;
 
         return array(
             'message' => "Hello, this product is great!",
@@ -155,12 +169,13 @@ class CommentProductAloui extends Module implements \PrestaShop\PrestaShop\Core\
         );
     }
 
-    protected function getAllRecord(){
+    protected function getAllRecord()
+    {
         $sql = new DbQuery();
-            $sql->select('*');
-            $sql->from('product_comment', 'pc');
-            $sql->innerJoin('customer', 'c', 'pc.user_id = c.id_customer');
-            return DB::getInstance()->executeS($sql);
+        $sql->select('*');
+        $sql->from('product_comment', 'pc');
+        $sql->innerJoin('customer', 'c', 'pc.user_id = c.id_customer');
+        return DB::getInstance()->executeS($sql);
     }
 
 }
